@@ -1,8 +1,8 @@
 import { Application } from 'express';
-import { AppLogger } from '../utils';
+import AuthRouter from './AuthRoutes';
 
 export default class RouteManager {
   static setupRoutes(app: Application) {
-    AppLogger.info(app.enabled); // dummy log
+    app.use('/auth', AuthRouter);
   }
 }

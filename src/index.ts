@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { AppLogger, unhandledErrorHandler } from './utils';
 import config from 'config';
 import app from './app';

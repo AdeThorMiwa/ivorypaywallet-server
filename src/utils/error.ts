@@ -1,7 +1,8 @@
 import { Server } from 'http';
 import { AppLogger } from '.';
 import { NextFunction, Request, Response } from 'express';
-import { HttpError, InternalServerError, isHttpError } from 'http-errors';
+import { BadRequest, HttpError, InternalServerError, isHttpError } from 'http-errors';
+import { validationResult } from 'express-validator';
 
 const INTERNAL_SERVER_ERROR_CODE = 500;
 
@@ -40,14 +41,13 @@ export const errorHandlerMiddleware = (
   if (!isHttpError(error)) {
     // it means it is a server generated error
     const e = error;
+
     error = new InternalServerError(
       e.message || 'An error occurred while processing your request. We are looking into it.',
     );
   }
 
-  const includeStackTrace = process.env.NODE_ENV !== 'production';
   const baseError = <HttpError>error;
-  const errorData = baseError.getErrorData(includeStackTrace);
 
   if (baseError.statusCode >= INTERNAL_SERVER_ERROR_CODE) {
     try {
@@ -56,11 +56,40 @@ export const errorHandlerMiddleware = (
         url: req.url,
         clientInfo: req.headers['user-agent'],
         status: baseError.statusCode,
-        message: errorData.message,
+        message: baseError.message,
         stack: baseError.stack,
       });
     } catch (e) {}
   }
 
-  return res.status(baseError.statusCode).send(errorData);
+  const errObject: Record<string, unknown> = {
+    name: baseError.name,
+    message: baseError.message,
+    statusCode: baseError.statusCode,
+  };
+
+  if (process.env.NODE_ENV !== 'production') {
+    errObject.stack = baseError.stack;
+  }
+
+  return res.status(baseError.statusCode).json(errObject);
 };
+
+export const throwValidationError = (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorSet = new Set();
+    errors.array().forEach(er => {
+      errorSet.add(`${er.msg}`);
+    });
+
+    return next(new BadRequest(`Invalid or missing params: ${Array.from(errorSet.values())}`));
+  }
+  next();
+};
+
+export const catcher =
+  (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    fn(req, res, next).catch(next);
+  };
