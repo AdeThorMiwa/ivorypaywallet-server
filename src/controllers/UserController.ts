@@ -16,11 +16,24 @@ class UserController {
     res.status(200).json(response);
   };
 
+  public getAuthenticatedUser = async (req: Request, res: Response) => {
+    const userId = this._getUserIdFromRequest(<AuthRequest>req);
+    const response = await this.userService.getUserById(userId);
+    res.status(200).json(response);
+  };
+
   private _getEmailFromRequest = (req: AuthRequest): string => {
     if (!req.auth.email) {
       throw new Forbidden('Could not authenticate');
     }
     return req.auth.email;
+  };
+
+  private _getUserIdFromRequest = (req: AuthRequest): string => {
+    if (!req.auth.userId) {
+      throw new Forbidden('Could not authenticate');
+    }
+    return req.auth.userId;
   };
 }
 

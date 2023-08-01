@@ -37,6 +37,13 @@ class UserService {
     return { token: authToken };
   };
 
+  public getUserById = async (userId: string) => {
+    return await this.userRepository.findOne({
+      where: { uid: userId },
+      select: { id: false },
+    });
+  };
+
   public userWithEmailExist = async (email: string) => {
     return await this.userRepository.exist({ where: { email } });
   };
