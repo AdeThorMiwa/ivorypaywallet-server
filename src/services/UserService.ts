@@ -6,7 +6,7 @@ import AvatarService from './AvatarService';
 import EncryptionService from './EncryptionService';
 import TokenService from './TokenService';
 import AppEventService from './AppEventService';
-import { AppEvents } from '../constants';
+import { AppEvents, SCOPES } from '../constants';
 import { FindOptionsSelect } from 'typeorm';
 
 @Service()
@@ -39,7 +39,7 @@ class UserService {
     // inform the system of the event
     this.appEventService.emit(AppEvents.NEW_USER, user.uid);
 
-    const authToken = await this.tokenService.generateAuthToken(user.uid, []);
+    const authToken = await this.tokenService.generateAuthToken(user.uid, [SCOPES.USER]);
 
     return { token: authToken };
   };

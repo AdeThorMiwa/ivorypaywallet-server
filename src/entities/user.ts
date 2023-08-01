@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Wallet } from './wallet';
 
-@Entity()
+@Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -44,8 +44,8 @@ export class User {
   })
   password: string;
 
-  @OneToOne(() => Wallet)
-  @JoinColumn()
+  @OneToOne(() => Wallet, wallet => wallet.user, { cascade: true })
+  @JoinColumn({ foreignKeyConstraintName: 'walletId' })
   wallet: Wallet;
 
   @CreateDateColumn()

@@ -3,18 +3,20 @@ import {
   CreateDateColumn,
   Entity,
   Generated,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { DecimalTransformer } from '../utils/decimal';
 import Decimal from 'decimal.js';
+import { User } from './user';
 
 @Entity({ name: 'wallets' })
 export class Wallet {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('uuid')
+  @Column({ type: 'uuid', foreignKeyConstraintName: 'walletId' })
   @Generated('uuid')
   uid: string;
 
@@ -26,6 +28,9 @@ export class Wallet {
     transformer: new DecimalTransformer(),
   })
   balance: Decimal;
+
+  @OneToOne(() => User, user => user.wallet)
+  user: User;
 
   @CreateDateColumn()
   createdOn: Date;

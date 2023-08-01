@@ -10,6 +10,10 @@ class WalletService {
   private readonly walletRepository = DatabaseService.getInstance().getRepository(Wallet);
   constructor() {}
 
+  public getWalletByUserId = async (userId: string) => {
+    return await this.walletRepository.findOne({ where: { user: { uid: userId } } });
+  };
+
   public setupUserWallet = async (userId: string) => {
     AppLogger.info(`Setting up wallet for user >>> ${userId}`);
     const user = await this.userRepository.findOne({ where: { uid: userId } });
