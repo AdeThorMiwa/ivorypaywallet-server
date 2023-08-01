@@ -5,5 +5,25 @@
     },
     "logger": {
         "level": "debug"
+    },
+    "jwt": {
+        "algo": "HS256",
+        "issuer": "IvoryPay",
+        "expiry": 3600
+    },
+    "email": {
+        "sender": "IvoryPayWallet <bendamyth@gmail.com>",
+        "service": "gmail",
+        "auth": {
+            "user": "bendamyth@gmail.com"
+        }
+    }, 
+    "database": {
+        "type": "postgres",
+        "database": "IvoryPay",
+        "host": "ep-polished-mountain-213773.eu-central-1.aws.neon.tech",
+        "port": 5432,
+        "username": "bendamyth",
+        "password": "DATABASE_PASSWORD"
     }
 }

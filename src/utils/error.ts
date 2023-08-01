@@ -3,6 +3,7 @@ import { AppLogger } from '.';
 import { NextFunction, Request, Response } from 'express';
 import { BadRequest, HttpError, InternalServerError, isHttpError } from 'http-errors';
 import { validationResult } from 'express-validator';
+import config from 'config';
 
 const INTERNAL_SERVER_ERROR_CODE = 500;
 
@@ -68,7 +69,7 @@ export const errorHandlerMiddleware = (
     statusCode: baseError.statusCode,
   };
 
-  if (process.env.NODE_ENV !== 'production') {
+  if (config.util.getEnv('NODE_ENV') !== 'production') {
     errObject.stack = baseError.stack;
   }
 
