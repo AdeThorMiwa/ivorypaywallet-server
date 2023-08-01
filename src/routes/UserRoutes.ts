@@ -1,20 +1,21 @@
 import { Router } from 'express';
 import Container from 'typedi';
-import AuthController from '../controllers/AuthController';
+import UserController from '../controllers/UserController';
 import { asyncHandler, throwValidationError } from '../utils';
 import { body } from 'express-validator';
 import { Security } from '../middlewares';
 import { SCOPES } from '../constants';
 
 const router = Router();
-const controller = Container.get<AuthController>(AuthController);
+const controller = Container.get<UserController>(UserController);
 
 router.post(
-  '/invite',
-  Security.requireAuthentication([SCOPES.ADMIN]),
-  body('email').isEmail().withMessage('Invalid or missing email'),
+  '/',
+  Security.requireAuthentication([SCOPES.INVITE]),
+  body('username').trim().isString().isLength({ min: 3, max: 50 }),
+  body('password').trim().isStrongPassword(),
   throwValidationError,
-  asyncHandler(controller.invite),
+  asyncHandler(controller.createUser),
 );
 
 export default router;

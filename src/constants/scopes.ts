@@ -1,3 +1,5 @@
 export const SCOPES = {
-  CAN_CREATE_PROFILE: 'profile.can-create-profile',
+  ADMIN: 'admin.full',
+  USER: 'user.full',
+  INVITE: 'user.partial',
 };

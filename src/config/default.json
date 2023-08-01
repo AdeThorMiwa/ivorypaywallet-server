@@ -9,7 +9,11 @@
     "jwt": {
         "algo": "HS256",
         "issuer": "IvoryPay",
-        "expiry": 3600
+        "audience": "User",
+        "expiry": {
+            "invite_token": "1h",
+            "auth_token": 3600
+        }
     },
     "email": {
         "sender": "IvoryPayWallet <bendamyth@gmail.com>",
@@ -25,5 +29,10 @@
         "port": 5432,
         "username": "bendamyth",
         "password": "DATABASE_PASSWORD"
+    },
+    "encryption": {
+        "password": {
+            "salt": 12
+        }
     }
 }

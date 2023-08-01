@@ -89,7 +89,7 @@ export const throwValidationError = (req: Request, res: Response, next: NextFunc
   next();
 };
 
-export const catcher =
+export const asyncHandler =
   (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) =>
   async (req: Request, res: Response, next: NextFunction) => {
     fn(req, res, next).catch(next);
