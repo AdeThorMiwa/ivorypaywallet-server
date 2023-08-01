@@ -3,9 +3,12 @@ import {
   CreateDateColumn,
   Entity,
   Generated,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Wallet } from './wallet';
 
 @Entity()
 export class User {
@@ -40,6 +43,10 @@ export class User {
     select: false,
   })
   password: string;
+
+  @OneToOne(() => Wallet)
+  @JoinColumn()
+  wallet: Wallet;
 
   @CreateDateColumn()
   createdOn: Date;

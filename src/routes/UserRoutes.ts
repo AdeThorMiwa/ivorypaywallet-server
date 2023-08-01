@@ -18,6 +18,10 @@ router.post(
   asyncHandler(controller.createUser),
 );
 
-router.get('/me', Security.requireAuthentication([SCOPES.USER]), asyncHandler(controller.getAuthenticatedUser))
+router.get(
+  '/me',
+  Security.requireAuthentication([SCOPES.USER]),
+  asyncHandler(controller.getAuthenticatedUser),
+);
 
 export default router;

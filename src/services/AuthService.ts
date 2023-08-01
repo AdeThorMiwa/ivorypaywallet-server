@@ -33,7 +33,7 @@ class AuthService {
   public authenticateUser = async (email: string, password: string) => {
     AppLogger.info(`Authenticating user >>> ${email}`);
 
-    const user = await this.userService.getUserByEmail(email);
+    const user = await this.userService.getUserByEmail(email, { uid: true, password: true });
     if (!user) {
       throw new BadRequest('Missing or invalid param');
     }

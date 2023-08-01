@@ -5,6 +5,9 @@ import { BadRequest } from 'http-errors';
 import AvatarService from './AvatarService';
 import EncryptionService from './EncryptionService';
 import TokenService from './TokenService';
+import AppEventService from './AppEventService';
+import { AppEvents } from '../constants';
+import { FindOptionsSelect } from 'typeorm';
 
 @Service()
 class UserService {
@@ -13,6 +16,7 @@ class UserService {
     @Inject() readonly avatarService: AvatarService,
     @Inject() readonly encryptionService: EncryptionService,
     @Inject() readonly tokenService: TokenService,
+    @Inject() readonly appEventService: AppEventService,
   ) {}
 
   public createUser = async (email: string, username: string, password: string) => {
@@ -32,6 +36,9 @@ class UserService {
 
     await this.userRepository.save(user);
 
+    // inform the system of the event
+    this.appEventService.emit(AppEvents.NEW_USER, user.uid);
+
     const authToken = await this.tokenService.generateAuthToken(user.uid, []);
 
     return { token: authToken };
@@ -48,8 +55,8 @@ class UserService {
     return await this.userRepository.exist({ where: { email } });
   };
 
-  public getUserByEmail = async (email: string) => {
-    return await this.userRepository.findOne({ where: { email } });
+  public getUserByEmail = async (email: string, select?: FindOptionsSelect<User>) => {
+    return await this.userRepository.findOne({ where: { email }, select });
   };
 }
 
