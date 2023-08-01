@@ -9,10 +9,20 @@ import { SCOPES } from '../constants';
 const router = Router();
 const controller = Container.get<AuthController>(AuthController);
 
+const emailValidator = body('email').isEmail().withMessage('Invalid or missing email');
+
+router.post(
+  '/',
+  emailValidator,
+  body('password').trim().isString(),
+  throwValidationError,
+  asyncHandler(controller.login),
+);
+
 router.post(
   '/invite',
   Security.requireAuthentication([SCOPES.ADMIN]),
-  body('email').isEmail().withMessage('Invalid or missing email'),
+  emailValidator,
   throwValidationError,
   asyncHandler(controller.invite),
 );

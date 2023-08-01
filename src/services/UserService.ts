@@ -40,6 +40,10 @@ class UserService {
   public userWithEmailExist = async (email: string) => {
     return await this.userRepository.exist({ where: { email } });
   };
+
+  public getUserByEmail = async (email: string) => {
+    return await this.userRepository.findOne({ where: { email } });
+  };
 }
 
 export default UserService;
