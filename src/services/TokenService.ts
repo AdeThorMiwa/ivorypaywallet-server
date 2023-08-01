@@ -10,7 +10,7 @@ class TokenService {
   public newInviteToken = async (email: string): Promise<string> => {
     const payload = {
       email,
-      scopes: [SCOPES.CAN_CREATE_PROFILE],
+      scopes: [SCOPES.INVITE],
     };
     return this._sign(payload, config.get<string>('jwt.expiry.invite_token'));
   };
