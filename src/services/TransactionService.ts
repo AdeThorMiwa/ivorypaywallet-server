@@ -14,6 +14,8 @@ import { AppLogger } from '../utils';
 import AppEventService from './AppEventService';
 import { Job, Queue, Worker } from 'bullmq';
 import { QueueToConfigMap, Queues, TransactionJobTypes } from '../constants/queue';
+import { getPaginationConfig, paginateResponse } from '../utils/pagination';
+import { FindManyOptions } from 'typeorm';
 
 @Service()
 class TransactionService {
@@ -105,6 +107,27 @@ class TransactionService {
       AppLogger.error('An error occured while trying to create transaction', e);
       throw new InternalServerError('Something went wrong');
     }
+  };
+
+  public getTransactions = async (
+    userId: string | undefined,
+    page: number,
+    limit: number,
+    desc = true,
+  ) => {
+    const [take, skip] = getPaginationConfig(page, limit);
+
+    const query: FindManyOptions<Transaction> = {
+      where: { from: { uid: userId } },
+      take,
+      skip,
+      order: { createdOn: desc ? 'DESC' : 'ASC' },
+    };
+
+    const data = await this.transactionRepository.find(query);
+    const count = await this.transactionRepository.count(query);
+
+    return paginateResponse(data, count, page, limit);
   };
 
   private _processNewTransaction = async (transactionId: string) => {

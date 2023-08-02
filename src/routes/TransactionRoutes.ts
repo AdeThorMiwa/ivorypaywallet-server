@@ -3,7 +3,7 @@ import Container from 'typedi';
 import { asyncHandler, throwValidationError } from '../utils';
 import { Security } from '../middlewares';
 import { SCOPES } from '../constants';
-import { body } from 'express-validator';
+import { body, query } from 'express-validator';
 import { TransactionType } from '../interfaces/transactions';
 import { decimalValidator } from '../utils/decimal';
 import TransactionController from '../controllers/TransactionController';
@@ -11,7 +11,7 @@ import TransactionController from '../controllers/TransactionController';
 const router = Router();
 const controller = Container.get<TransactionController>(TransactionController);
 
-router.get(
+router.post(
   '/',
   Security.requireAuthentication([SCOPES.USER]),
   body('type').isIn([TransactionType.TRANSFER, TransactionType.WITHDRAW]),
@@ -20,6 +20,15 @@ router.get(
   body('note').trim().isString().optional(),
   throwValidationError,
   asyncHandler(controller.initiateTransaction),
+);
+
+router.get(
+  '/',
+  Security.requireAuthentication([SCOPES.USER]),
+  query('page').isNumeric(),
+  query('limit').isNumeric(),
+  throwValidationError,
+  asyncHandler(controller.getAuthenticatedUserTransactions),
 );
 
 export default router;

@@ -1,3 +1,5 @@
+import { IPaginatedRequest } from './util';
+
 export enum TransactionType {
   TRANSFER = 'TRANSFER',
   WITHDRAW = 'WITHDRAW',
@@ -19,6 +21,8 @@ export interface InitiateTransactionPayload {
   to: string;
   note?: string;
 }
+
+export interface TransactionListPayload extends IPaginatedRequest {}
 
 export interface IntitiateTransactionResponse {
   transactionId: string;

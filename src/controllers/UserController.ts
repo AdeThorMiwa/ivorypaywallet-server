@@ -13,7 +13,7 @@ class UserController {
     const email = this._getEmailFromRequest(<AuthRequest>req);
     const body = <CreateUserRequest>req.body;
     const response = await this.userService.createUser(email, body.username, body.password);
-    res.status(200).json(response);
+    res.status(201).json(response);
   };
 
   public getAuthenticatedUser = async (req: Request, res: Response) => {
