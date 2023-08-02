@@ -1,7 +1,7 @@
 import { Inject, Service } from 'typedi';
 import { Request, Response } from 'express';
 import AuthService from '../services/AuthService';
-import { AuthRequest, InviteUserRequestBody, LoginRequestBody } from '../interfaces';
+import { InviteUserRequestBody, LoginRequestBody } from '../interfaces';
 
 @Service()
 class AuthController {
@@ -14,9 +14,8 @@ class AuthController {
   };
 
   public login = async (req: Request, res: Response) => {
-    const isAdmin = (<AuthRequest>req).auth.isAdmin;
     const body = <LoginRequestBody>req.body;
-    const response = await this.authService.authenticateUser(body.email, body.password, isAdmin);
+    const response = await this.authService.authenticateUser(body.email, body.password);
     res.status(200).json(response);
   };
 }
