@@ -1,4 +1,5 @@
 import config from 'config';
+import { query } from 'express-validator';
 
 export const getPaginationConfig = (page: number, limit?: number) => {
   const take = limit || config.get<number>('pagination.limit');
@@ -20,3 +21,9 @@ export const paginateResponse = (data: unknown[], total: number, page: number, l
     lastPage: lastPage,
   };
 };
+
+export const paginationValidator = [
+  query('page').isNumeric(),
+  query('limit').isNumeric(),
+  query('desc').trim().isBoolean(),
+];

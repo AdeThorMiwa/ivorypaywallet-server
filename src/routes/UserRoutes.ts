@@ -5,6 +5,7 @@ import { asyncHandler, throwValidationError } from '../utils';
 import { body } from 'express-validator';
 import { Security } from '../middlewares';
 import { SCOPES } from '../constants';
+import { paginationValidator } from '../utils/pagination';
 
 const router = Router();
 const controller = Container.get<UserController>(UserController);
@@ -22,6 +23,14 @@ router.get(
   '/me',
   Security.requireAuthentication([SCOPES.USER]),
   asyncHandler(controller.getAuthenticatedUser),
+);
+
+router.get(
+  '/',
+  Security.requireAuthentication([SCOPES.ADMIN]),
+  paginationValidator,
+  throwValidationError,
+  asyncHandler(controller.getUserList),
 );
 
 export default router;

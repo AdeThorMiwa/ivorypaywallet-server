@@ -7,8 +7,9 @@ import EncryptionService from './EncryptionService';
 import TokenService from './TokenService';
 import AppEventService from './AppEventService';
 import { AppEvents, SCOPES } from '../constants';
-import { FindOptionsSelect } from 'typeorm';
+import { FindManyOptions, FindOptionsSelect } from 'typeorm';
 import { CreateUserResponse, UserType } from '../interfaces';
+import { getPaginationConfig, paginateResponse } from '../utils/pagination';
 
 @Service()
 class UserService {
@@ -75,6 +76,22 @@ class UserService {
       where: { username, userType: UserType.USER },
       select,
     });
+  };
+
+  public getUsers = async (page: number, limit: number, desc = true) => {
+    const [take, skip] = getPaginationConfig(page, limit);
+
+    const query: FindManyOptions<User> = {
+      where: { userType: UserType.USER },
+      take,
+      skip,
+      order: { createdOn: desc ? 'DESC' : 'ASC' },
+    };
+
+    const data = await this.userRepository.find(query);
+    const count = await this.userRepository.count(query);
+
+    return paginateResponse(data, count, page, limit);
   };
 }
 

@@ -2,7 +2,7 @@ import { User } from '../entities';
 import { Inject, Service } from 'typedi';
 import AvatarService from '../services/AvatarService';
 import EncryptionService from '../services/EncryptionService';
-import { Seeder, UserType } from '../interfaces';
+import { Seeder, UserStatus, UserType } from '../interfaces';
 import { AppLogger } from '../utils';
 import BaseSeeder from './base';
 
@@ -29,6 +29,7 @@ export default class AdminSeeder extends BaseSeeder implements Seeder {
       admin.avatar = avatar;
       admin.email = email;
       admin.userType = UserType.ADMIN;
+      admin.status = UserStatus.ACTIVE;
 
       const dbInstance = await this.getDBInstance();
       const adminRepository = dbInstance.getRepository(User);

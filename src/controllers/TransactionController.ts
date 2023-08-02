@@ -22,6 +22,7 @@ class TransactionController {
       auth.userId!,
       body.page,
       body.limit,
+      body.desc,
     );
     res.status(200).json(response);
   };

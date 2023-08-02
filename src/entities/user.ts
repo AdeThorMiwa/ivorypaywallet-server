@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { Wallet } from './wallet';
 import { Transaction } from './transaction';
-import { UserType } from '../interfaces';
+import { UserStatus, UserType } from '../interfaces';
 
 @Entity({ name: 'users' })
 export class User {
@@ -24,6 +24,9 @@ export class User {
 
   @Column({ enum: Object.keys(UserType), default: UserType.USER })
   userType: UserType;
+
+  @Column({ enum: Object.keys(UserStatus), default: UserStatus.INACTIVE })
+  status: UserStatus;
 
   @Column({
     type: 'varchar',

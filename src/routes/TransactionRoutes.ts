@@ -3,10 +3,11 @@ import Container from 'typedi';
 import { asyncHandler, throwValidationError } from '../utils';
 import { Security } from '../middlewares';
 import { SCOPES } from '../constants';
-import { body, param, query } from 'express-validator';
+import { body, param } from 'express-validator';
 import { TransactionType } from '../interfaces/transactions';
 import { decimalValidator } from '../utils/decimal';
 import TransactionController from '../controllers/TransactionController';
+import { paginationValidator } from '../utils/pagination';
 
 const router = Router();
 const controller = Container.get<TransactionController>(TransactionController);
@@ -25,8 +26,7 @@ router.post(
 router.get(
   '/',
   Security.requireAuthentication([SCOPES.USER]),
-  query('page').isNumeric(),
-  query('limit').isNumeric(),
+  paginationValidator,
   throwValidationError,
   asyncHandler(controller.getAuthenticatedUserTransactions),
 );

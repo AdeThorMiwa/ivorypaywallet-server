@@ -1,7 +1,7 @@
 import { Inject, Service } from 'typedi';
 import { Request, Response } from 'express';
 import UserService from '../services/UserService';
-import { CreateUserRequest, CreateUserResponse } from '../interfaces/user';
+import { CreateUserRequest, CreateUserResponse, UserListPayload } from '../interfaces/user';
 import { AuthRequest } from '../interfaces';
 import { Forbidden } from 'http-errors';
 import AdminService from '../services/AdminService';
@@ -38,6 +38,12 @@ class UserController {
       throw new Forbidden('Could not authenticate');
     }
     return req.auth.email;
+  };
+
+  public getUserList = async (req: Request, res: Response) => {
+    const body = <UserListPayload>req.body;
+    const response = await this.userService.getUsers(body.page, body.limit, body.desc);
+    res.status(200).json(response);
   };
 
   private _getUserIdFromRequest = (req: AuthRequest): string => {

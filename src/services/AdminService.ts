@@ -6,10 +6,12 @@ import EmailService from './EmailService';
 import EncryptionService from './EncryptionService';
 import DatabaseService from './DatabaseService';
 import { User } from '../entities';
-import { CreateUserResponse, UserType } from '../interfaces';
+import { CreateUserResponse, UserStatus, UserType } from '../interfaces';
 import AvatarService from './AvatarService';
 import { AppEvents, SCOPES } from '../constants';
 import AppEventService from './AppEventService';
+import { getPaginationConfig, paginateResponse } from '../utils/pagination';
+import { FindManyOptions } from 'typeorm';
 
 @Service()
 class AdminService {
@@ -73,6 +75,26 @@ class AdminService {
 
   public getAdminById = async (adminId: string) => {
     return await this.adminRepository.findOne({ where: { uid: adminId } });
+  };
+
+  public getAdmins = async (page: number, limit: number, desc = true) => {
+    const [take, skip] = getPaginationConfig(page, limit);
+
+    const query: FindManyOptions<User> = {
+      where: { userType: UserType.ADMIN },
+      take,
+      skip,
+      order: { createdOn: desc ? 'DESC' : 'ASC' },
+    };
+
+    const data = await this.adminRepository.find(query);
+    const count = await this.adminRepository.count(query);
+
+    return paginateResponse(data, count, page, limit);
+  };
+
+  public updateUserStatus = async (userId: string, status: UserStatus) => {
+    return await this.adminRepository.update({ uid: userId }, { status });
   };
 
   private _adminWithEmailExist = async (email: string) => {
