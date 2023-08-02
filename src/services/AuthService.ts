@@ -34,7 +34,12 @@ class AuthService {
   public authenticateUser = async (email: string, password: string) => {
     AppLogger.info(`Authenticating user >>> ${email}`);
 
-    const user = await this.userService.getUserByEmail(email, { uid: true, password: true });
+    const user = await this.userService.getUserByEmail(email, {
+      uid: true,
+      password: true,
+      userType: true,
+    });
+
     if (!user) {
       throw new BadRequest('Missing or invalid param');
     }
@@ -44,11 +49,16 @@ class AuthService {
       throw new BadRequest('Missing or invalid param');
     }
 
-    const token = await this.tokenService.generateAuthToken(user.uid, [
-      user.userType === UserType.ADMIN ? SCOPES.ADMIN : SCOPES.USER,
-    ]);
+    const token = await this.tokenService.generateAuthToken(
+      user.uid,
+      this._getUserScopesByType(user.userType),
+    );
 
     return { token };
+  };
+
+  private _getUserScopesByType = (userType: UserType) => {
+    return [userType === UserType.ADMIN ? SCOPES.ADMIN : SCOPES.USER];
   };
 }
 
