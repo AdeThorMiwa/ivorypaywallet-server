@@ -12,8 +12,10 @@ const queueOptions: QueueOptions = {
   },
   connection: {
     // redis server connection options
-    host: config.get<string>('queue.host'),
-    port: config.get<number>('queue.port'),
+    host: process.env.REDIS_HOST ?? config.get<string>('queue.host'),
+    port: process.env.REDIS_PORT
+      ? parseInt(process.env.REDIS_PORT)
+      : config.get<number>('queue.port'),
   },
 };
 
