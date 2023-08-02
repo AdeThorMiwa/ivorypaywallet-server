@@ -25,6 +25,15 @@ class TransactionController {
     );
     res.status(200).json(response);
   };
+
+  public getTransactionById = async (req: Request, res: Response) => {
+    const { auth } = <AuthRequest>req;
+    const response = await this.transactionService.getTransaction(
+      auth.userId!,
+      req.body.transactionId,
+    );
+    res.status(200).json(response);
+  };
 }
 
 export default TransactionController;

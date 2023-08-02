@@ -5,7 +5,7 @@ import {
   TransactionStatus,
 } from '../interfaces/transactions';
 import UserService from './UserService';
-import { BadRequest, Forbidden, InternalServerError } from 'http-errors';
+import { BadRequest, Forbidden, InternalServerError, NotFound } from 'http-errors';
 import WalletService from './WalletService';
 import Decimal from 'decimal.js';
 import DatabaseService from './DatabaseService';
@@ -118,16 +118,39 @@ class TransactionService {
     const [take, skip] = getPaginationConfig(page, limit);
 
     const query: FindManyOptions<Transaction> = {
-      where: { from: { uid: userId } },
       take,
       skip,
       order: { createdOn: desc ? 'DESC' : 'ASC' },
     };
 
+    if (userId) {
+      const user = await this.userService.getUserById(userId);
+      query.where = [{ from: { uid: userId } }, { to: user?.username }];
+    }
+
     const data = await this.transactionRepository.find(query);
     const count = await this.transactionRepository.count(query);
 
     return paginateResponse(data, count, page, limit);
+  };
+
+  public getTransaction = async (userId: string, transactionId: string) => {
+    const transaction = await this.transactionRepository.findOne({
+      where: { uid: transactionId },
+    });
+
+    if (!transaction || (await this._transactionNotBelongToUser(transaction, userId))) {
+      throw new NotFound('Transaction not found');
+    }
+
+    return transaction;
+  };
+
+  private _transactionNotBelongToUser = async (transaction: Transaction, userId: string) => {
+    return (
+      transaction.from.uid !== userId &&
+      transaction.to !== (await this.userService.getUserById(userId))?.username
+    );
   };
 
   private _processNewTransaction = async (transactionId: string) => {

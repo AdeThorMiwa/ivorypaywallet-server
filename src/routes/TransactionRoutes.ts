@@ -3,7 +3,7 @@ import Container from 'typedi';
 import { asyncHandler, throwValidationError } from '../utils';
 import { Security } from '../middlewares';
 import { SCOPES } from '../constants';
-import { body, query } from 'express-validator';
+import { body, param, query } from 'express-validator';
 import { TransactionType } from '../interfaces/transactions';
 import { decimalValidator } from '../utils/decimal';
 import TransactionController from '../controllers/TransactionController';
@@ -15,7 +15,7 @@ router.post(
   '/',
   Security.requireAuthentication([SCOPES.USER]),
   body('type').isIn([TransactionType.TRANSFER, TransactionType.WITHDRAW]),
-  body('amount').custom(decimalValidator).withMessage('Invalid value'),
+  body('amount').custom(decimalValidator).withMessage('Invalid amount'),
   body('to').trim().isString(),
   body('note').trim().isString().optional(),
   throwValidationError,
@@ -29,6 +29,14 @@ router.get(
   query('limit').isNumeric(),
   throwValidationError,
   asyncHandler(controller.getAuthenticatedUserTransactions),
+);
+
+router.get(
+  '/:transactionId',
+  Security.requireAuthentication([SCOPES.USER]),
+  param('transactionId').isUUID().withMessage('Invalid transaction id'),
+  throwValidationError,
+  asyncHandler(controller.getTransactionById),
 );
 
 export default router;
