@@ -11,3 +11,7 @@ export enum UserType {
   USER = 'USER',
   ADMIN = 'ADMIN',
 }
+
+export interface CreateUserResponse {
+  token: string;
+}

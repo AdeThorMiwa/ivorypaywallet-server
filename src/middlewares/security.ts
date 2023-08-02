@@ -3,6 +3,7 @@ import JWT, { Algorithm } from 'jsonwebtoken';
 import config from 'config';
 import { Unauthorized } from 'http-errors';
 import { AuthRequest } from '../interfaces';
+import { SCOPES } from '../constants';
 
 export const requireAuthentication = (scopes?: string[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -23,16 +24,19 @@ export const requireAuthentication = (scopes?: string[]) => {
         ignoreNotBefore: false,
       });
 
-      const { email, userId, scopes: payloadScopes } = <Record<string, unknown>>jwtPayload.payload;
+      const { email, userId, scopes: _scopes } = <Record<string, unknown>>jwtPayload.payload;
+      const payloadScopes = <string[]>_scopes;
       (<AuthRequest>req).auth = {
         email: email as string,
         userId: userId as string,
+        isAdmin:
+          payloadScopes.includes(SCOPES.ADMIN_INVITE) || payloadScopes.includes(SCOPES.ADMIN),
       };
 
       // validate scopes
       if (scopes?.length) {
         scopes.forEach(scope => {
-          const scopeNotFound = !(payloadScopes as string[]).find(scope_ => scope_ === scope);
+          const scopeNotFound = !payloadScopes.find(scope_ => scope_ === scope);
           if (scopeNotFound) {
             return next(new Unauthorized('Invalid or missing token'));
           }

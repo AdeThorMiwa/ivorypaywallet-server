@@ -6,7 +6,10 @@ import EmailService from './EmailService';
 import EncryptionService from './EncryptionService';
 import DatabaseService from './DatabaseService';
 import { User } from '../entities';
-import { UserType } from '../interfaces';
+import { CreateUserResponse, UserType } from '../interfaces';
+import AvatarService from './AvatarService';
+import { AppEvents, SCOPES } from '../constants';
+import AppEventService from './AppEventService';
 
 @Service()
 class AdminService {
@@ -15,6 +18,8 @@ class AdminService {
     @Inject() readonly tokenService: TokenService,
     @Inject() readonly emailService: EmailService,
     @Inject() readonly encryptionService: EncryptionService,
+    @Inject() readonly avatarService: AvatarService,
+    @Inject() readonly appEventService: AppEventService,
   ) {}
 
   public sendAdminInvite = async (email: string) => {
@@ -29,6 +34,41 @@ class AdminService {
     await this.emailService.sendInviteTokenMail(email, inviteToken);
 
     return { sent: true };
+  };
+
+  public createAdmin = async (
+    email: string,
+    username: string,
+    password: string,
+  ): Promise<CreateUserResponse> => {
+    const adminExist = await this.adminRepository.exist({
+      where: [
+        { email, userType: UserType.ADMIN },
+        { username, userType: UserType.ADMIN },
+      ],
+    });
+    if (adminExist) {
+      throw new BadRequest('username or email is already taken');
+    }
+
+    const avatar = await this.avatarService.getRandomAvatar();
+    const encryptedPassword = await this.encryptionService.passwordEncrypt(password);
+
+    const admin = new User();
+    admin.username = username;
+    admin.email = email;
+    admin.password = encryptedPassword;
+    admin.avatar = avatar;
+    admin.userType = UserType.ADMIN;
+
+    await this.adminRepository.save(admin);
+
+    // inform the system of the event
+    this.appEventService.emit(AppEvents.NEW_ADMIN, admin.uid);
+
+    const authToken = await this.tokenService.generateAuthToken(admin.uid, [SCOPES.ADMIN]);
+
+    return { token: authToken };
   };
 
   private _adminWithEmailExist = async (email: string) => {

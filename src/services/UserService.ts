@@ -8,7 +8,7 @@ import TokenService from './TokenService';
 import AppEventService from './AppEventService';
 import { AppEvents, SCOPES } from '../constants';
 import { FindOptionsSelect } from 'typeorm';
-import { UserType } from '../interfaces';
+import { CreateUserResponse, UserType } from '../interfaces';
 
 @Service()
 class UserService {
@@ -20,8 +20,17 @@ class UserService {
     @Inject() readonly appEventService: AppEventService,
   ) {}
 
-  public createUser = async (email: string, username: string, password: string) => {
-    const userExist = await this.userRepository.exist({ where: [{ email }, { username }] });
+  public createUser = async (
+    email: string,
+    username: string,
+    password: string,
+  ): Promise<CreateUserResponse> => {
+    const userExist = await this.userRepository.exist({
+      where: [
+        { email, userType: UserType.USER },
+        { username, userType: UserType.USER },
+      ],
+    });
     if (userExist) {
       throw new BadRequest('username or email is already taken');
     }
@@ -34,6 +43,7 @@ class UserService {
     user.email = email;
     user.password = encryptedPassword;
     user.avatar = avatar;
+    user.userType = UserType.USER;
 
     await this.userRepository.save(user);
 

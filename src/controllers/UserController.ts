@@ -1,18 +1,29 @@
 import { Inject, Service } from 'typedi';
 import { Request, Response } from 'express';
 import UserService from '../services/UserService';
-import { CreateUserRequest } from '../interfaces/user';
+import { CreateUserRequest, CreateUserResponse } from '../interfaces/user';
 import { AuthRequest } from '../interfaces';
 import { Forbidden } from 'http-errors';
+import AdminService from '../services/AdminService';
 
 @Service()
 class UserController {
-  constructor(@Inject() readonly userService: UserService) {}
+  constructor(
+    @Inject() readonly userService: UserService,
+    @Inject() readonly adminService: AdminService,
+  ) {}
 
-  public createUser = async (req: Request, res: Response) => {
-    const email = this._getEmailFromRequest(<AuthRequest>req);
+  public createUser = async (req_: Request, res: Response) => {
+    const req = <AuthRequest>req_;
+    const email = this._getEmailFromRequest(req);
     const body = <CreateUserRequest>req.body;
-    const response = await this.userService.createUser(email, body.username, body.password);
+    let response: CreateUserResponse;
+    if (req.auth.isAdmin) {
+      response = await this.adminService.createAdmin(email, body.username, body.password);
+    } else {
+      response = await this.userService.createUser(email, body.username, body.password);
+    }
+
     res.status(201).json(response);
   };
 
