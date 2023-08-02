@@ -2,15 +2,16 @@ import { Service } from 'typedi';
 import JWT, { Algorithm } from 'jsonwebtoken';
 import config from 'config';
 import { SCOPES } from '../constants';
+import { UserType } from '../interfaces';
 
 @Service()
 class TokenService {
   constructor() {}
 
-  public newInviteToken = async (email: string): Promise<string> => {
+  public newInviteToken = async (email: string, userType: UserType): Promise<string> => {
     const payload = {
       email,
-      scopes: [SCOPES.INVITE],
+      scopes: [userType === UserType.ADMIN ? SCOPES.ADMIN_INVITE : SCOPES.INVITE],
     };
     return this._sign(payload, config.get<string>('jwt.expiry.invite_token'));
   };

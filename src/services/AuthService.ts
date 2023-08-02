@@ -6,6 +6,7 @@ import TokenService from './TokenService';
 import EmailService from './EmailService';
 import EncryptionService from './EncryptionService';
 import { SCOPES } from '../constants';
+import { UserType } from '../interfaces';
 
 @Service()
 class AuthService {
@@ -23,7 +24,7 @@ class AuthService {
       throw new BadRequest('email already exist');
     }
 
-    const inviteToken = await this.tokenService.newInviteToken(email);
+    const inviteToken = await this.tokenService.newInviteToken(email, UserType.USER);
 
     await this.emailService.sendInviteTokenMail(email, inviteToken);
 

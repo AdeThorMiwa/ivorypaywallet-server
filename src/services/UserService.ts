@@ -8,6 +8,7 @@ import TokenService from './TokenService';
 import AppEventService from './AppEventService';
 import { AppEvents, SCOPES } from '../constants';
 import { FindOptionsSelect } from 'typeorm';
+import { UserType } from '../interfaces';
 
 @Service()
 class UserService {
@@ -52,15 +53,18 @@ class UserService {
   };
 
   public userWithEmailExist = async (email: string) => {
-    return await this.userRepository.exist({ where: { email } });
+    return await this.userRepository.exist({ where: { email, userType: UserType.USER } });
   };
 
   public getUserByEmail = async (email: string, select?: FindOptionsSelect<User>) => {
-    return await this.userRepository.findOne({ where: { email }, select });
+    return await this.userRepository.findOne({ where: { email, userType: UserType.USER }, select });
   };
 
   public getUserByUsername = async (username: string, select?: FindOptionsSelect<User>) => {
-    return await this.userRepository.findOne({ where: { username }, select });
+    return await this.userRepository.findOne({
+      where: { username, userType: UserType.USER },
+      select,
+    });
   };
 }
 

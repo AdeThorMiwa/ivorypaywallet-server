@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import helmet from 'helmet';
 import RouteManager from './routes';
+import { bootstrapSeeder } from './seeders';
 
 // Connect to DB
 DatabaseService.connect()
@@ -27,5 +28,8 @@ app.use(cors());
 RouteManager.setupRoutes(app);
 
 app.use(errorHandlerMiddleware);
+
+/** Bootstrap seeders */
+bootstrapSeeder();
 
 export default app;

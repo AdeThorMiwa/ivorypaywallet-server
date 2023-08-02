@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { Wallet } from './wallet';
 import { Transaction } from './transaction';
+import { UserType } from '../interfaces';
 
 @Entity({ name: 'users' })
 export class User {
@@ -20,6 +21,9 @@ export class User {
   @Column('uuid')
   @Generated('uuid')
   uid: string;
+
+  @Column({ enum: Object.keys(UserType), default: UserType.USER })
+  userType: UserType;
 
   @Column({
     type: 'varchar',
