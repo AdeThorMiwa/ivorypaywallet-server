@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "npx tsc --build",
-    "start": "NODE_CONFIG_DIR=./src/config node dist/index.js",
+    "start": "NODE_CONFIG_DIR=./dist/config node dist/index.js",
     "dev": "NODE_CONFIG_DIR=./src/config nodemon src/index.ts",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix"

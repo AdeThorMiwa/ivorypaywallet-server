@@ -16,5 +16,6 @@
     "allowSyntheticDefaultImports": true,
     "composite": true,
     "strictPropertyInitialization": false
-  }
+  },
+  "include": ["src/**/*", "src/**/*.json"]
 }
