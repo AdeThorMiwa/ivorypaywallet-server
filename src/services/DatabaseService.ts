@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import config from 'config';
 import { AppLogger } from '../utils';
-import { User, Wallet } from '../entities';
+import { Transaction, User, Wallet } from '../entities';
 
 class DatabaseService {
   private static DB = new DataSource({
@@ -14,7 +14,7 @@ class DatabaseService {
     ssl: true,
     synchronize: true,
     logging: config.util.getEnv('NODE_ENV') !== 'production',
-    entities: [User, Wallet],
+    entities: [User, Wallet, Transaction],
   });
 
   static async connect() {

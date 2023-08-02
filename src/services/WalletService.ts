@@ -3,6 +3,7 @@ import { AppLogger } from '../utils';
 import DatabaseService from './DatabaseService';
 import { User, Wallet } from '../entities';
 import Decimal from 'decimal.js';
+import { FindOptionsSelect } from 'typeorm';
 
 @Service()
 class WalletService {
@@ -10,8 +11,14 @@ class WalletService {
   private readonly walletRepository = DatabaseService.getInstance().getRepository(Wallet);
   constructor() {}
 
-  public getWalletByUserId = async (userId: string) => {
-    return await this.walletRepository.findOne({ where: { user: { uid: userId } } });
+  public getWalletByUserId = async (userId: string, select?: FindOptionsSelect<Wallet>) => {
+    return await this.walletRepository.findOne({ where: { user: { uid: userId } }, select });
+  };
+
+  public userHasEnoughWalletBalance = async (userId: string, amount: Decimal): Promise<boolean> => {
+    const userWallet = await this.getWalletByUserId(userId);
+    const walletBalance = new Decimal(userWallet?.balance ?? 0);
+    return walletBalance.greaterThanOrEqualTo(amount);
   };
 
   public setupUserWallet = async (userId: string) => {

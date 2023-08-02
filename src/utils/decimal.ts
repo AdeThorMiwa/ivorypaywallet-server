@@ -20,3 +20,15 @@ export const DecimalToString =
   (decimals: number = 2) =>
   (decimal?: Decimal) =>
     decimal?.toFixed?.(decimals) || decimal;
+
+export const decimalValidator = (v: string) => {
+  try {
+    const value = new Decimal(v);
+    if (value.isNaN()) {
+      throw new Error();
+    }
+    return true;
+  } catch {
+    return false;
+  }
+};

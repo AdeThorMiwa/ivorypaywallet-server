@@ -58,6 +58,10 @@ class UserService {
   public getUserByEmail = async (email: string, select?: FindOptionsSelect<User>) => {
     return await this.userRepository.findOne({ where: { email }, select });
   };
+
+  public getUserByUsername = async (username: string, select?: FindOptionsSelect<User>) => {
+    return await this.userRepository.findOne({ where: { username }, select });
+  };
 }
 
 export default UserService;
