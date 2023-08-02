@@ -10,7 +10,7 @@ import { bootstrapSeeder } from './seeders';
 // Connect to DB
 DatabaseService.connect()
   .then(result => {
-    AppLogger.info('Mongo Connected', result);
+    AppLogger.info('DB Connected', result);
   })
   .catch(error => {
     AppLogger.error(error.message, error);

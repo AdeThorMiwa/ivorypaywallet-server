@@ -7,7 +7,6 @@ import AdminRouter from './AdminRoutes';
 
 export default class RouteManager {
   static setupRoutes(app: Application) {
-    app.use('/', (req, res) => res.json({ message: 'Hi there' }));
     app.use('/auth', AuthRouter);
     app.use('/users', UserRouter);
     app.use('/wallets', WalletRouter);
