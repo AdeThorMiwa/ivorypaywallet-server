@@ -71,6 +71,10 @@ class AdminService {
     return { token: authToken };
   };
 
+  public getAdminById = async (adminId: string) => {
+    return await this.adminRepository.findOne({ where: { uid: adminId } });
+  };
+
   private _adminWithEmailExist = async (email: string) => {
     return await this.adminRepository.exist({ where: { email, userType: UserType.ADMIN } });
   };

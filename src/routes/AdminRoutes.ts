@@ -19,4 +19,10 @@ router.post(
   asyncHandler(controller.invite),
 );
 
+router.get(
+  '/me',
+  Security.requireAuthentication([SCOPES.USER]),
+  asyncHandler(controller.getAuthenticatedAdmin),
+);
+
 export default router;
