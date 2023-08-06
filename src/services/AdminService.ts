@@ -77,7 +77,7 @@ class AdminService {
     return await this.adminRepository.findOne({ where: { uid: adminId } });
   };
 
-  public getAdmins = async (page: number, limit: number, desc = true) => {
+  public getAdmins = async (page?: number, limit?: number, desc = true) => {
     const [take, skip] = getPaginationConfig(page, limit);
 
     const query: FindManyOptions<User> = {

@@ -48,9 +48,8 @@ export class Transaction {
   @Column({
     type: 'varchar',
     length: 150,
-    nullable: true,
   })
-  note?: string;
+  note: string;
 
   @CreateDateColumn()
   createdOn: Date;

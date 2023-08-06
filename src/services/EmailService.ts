@@ -53,11 +53,10 @@ class EmailService {
   /**
    *
    * @param token
-   * @returns tokenLink - http(s)://example.com/auth/invite?token=${token}
+   * @returns tokenLink - http(s)://example.com/auth/register?token=${token}
    */
   private _buildInvitationTokenLink(token: string): string {
-    const isProd = config.util.getEnv('NODE_ENV') === 'production';
-    return `${isProd ? 'https' : 'http'}://${config.get('server.host')}/auth/invite?token=${token}`;
+    return `${config.get('app.base_url')}/${config.get('app.invite_path')}?token=${token}`;
   }
 }
 

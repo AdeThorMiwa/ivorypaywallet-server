@@ -111,8 +111,8 @@ class TransactionService {
 
   public getTransactions = async (
     userId: string | undefined,
-    page: number,
-    limit: number,
+    page?: number,
+    limit?: number,
     desc = true,
   ) => {
     const [take, skip] = getPaginationConfig(page, limit);

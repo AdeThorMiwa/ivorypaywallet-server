@@ -18,7 +18,7 @@ router.post(
   body('type').isIn([TransactionType.TRANSFER, TransactionType.WITHDRAW]),
   body('amount').custom(decimalValidator).withMessage('Invalid amount'),
   body('to').trim().isString(),
-  body('note').trim().isString().optional(),
+  body('note').trim().isString(),
   throwValidationError,
   asyncHandler(controller.initiateTransaction),
 );

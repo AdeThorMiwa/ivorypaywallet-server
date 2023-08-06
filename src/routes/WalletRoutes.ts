@@ -9,7 +9,7 @@ const router = Router();
 const controller = Container.get<WalletController>(WalletController);
 
 router.get(
-  '/',
+  '/me',
   Security.requireAuthentication([SCOPES.USER]),
   asyncHandler(controller.getAuthenticatedUserWallet),
 );

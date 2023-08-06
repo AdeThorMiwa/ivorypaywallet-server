@@ -16,6 +16,7 @@ class AvatarService {
     // TODO: move to config file
     return {
       flip: true,
+      radius: 50,
     };
   };
 

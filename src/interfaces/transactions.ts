@@ -19,7 +19,7 @@ export interface InitiateTransactionPayload {
   type: TransactionType.TRANSFER | TransactionType.WITHDRAW;
   amount: string;
   to: string;
-  note?: string;
+  note: string;
 }
 
 export interface TransactionListPayload extends IPaginatedRequest {}

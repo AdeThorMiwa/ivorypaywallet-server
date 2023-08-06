@@ -78,7 +78,7 @@ class UserService {
     });
   };
 
-  public getUsers = async (page: number, limit: number, desc = true) => {
+  public getUsers = async (page?: number, limit?: number, desc = true) => {
     const [take, skip] = getPaginationConfig(page, limit);
 
     const query: FindManyOptions<User> = {

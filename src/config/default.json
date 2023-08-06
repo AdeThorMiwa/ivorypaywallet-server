@@ -3,6 +3,10 @@
         "host": "localhost",
         "port": 3000
     },
+    "app": {
+        "base_url": "http://localhost:5173",
+        "invite_path": "auth/register"
+    },
     "logger": {
         "level": "debug"
     },
